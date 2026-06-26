@@ -125,7 +125,7 @@ jupyter notebook "cleaning_EDA_data_version 2.ipynb"
 
 | Analysis | Method | Insight |
 |----------|--------|---------|
-| Stream distribution | Histogram | Highly right-skewed — most tracks have modest streams; a small elite drives massive totals |
+| Stream distribution | Histogram | Highly right-skewed most tracks have modest streams; a small elite drives massive totals |
 | Outlier detection | Boxplot (IQR) | Viral/evergreen tracks appear as extreme outliers in playlist and chart counts |
 | Artist ranking | Barplot | Top artists dominate not just by hit count but by sustained playlist inclusion |
 
