@@ -51,7 +51,7 @@ Spotify chart data across different years is inconsistently structured different
 spotify-2023.csv ──┐
                    ├──► Schema Harmonization ──► pd.concat() ──► Deduplication
 spotify-2024.csv ──┘         │                                        │
-                              │                                        ▼
+                             │                                        ▼
                     Column rename/drop                         Outlier Detection
                     Type casting                                  (IQR Method)
                     Null imputation (median)                         │
