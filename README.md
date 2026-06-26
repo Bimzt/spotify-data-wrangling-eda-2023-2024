@@ -1,74 +1,142 @@
-# Data Wrangling & Exploratory Data Analysis of Spotify Data (2023-2024)
+# Spotify Data Wrangling & Exploratory Data Analysis (2023-2024)
 
-1. Project Information
-   
-Title: Data Wrangling & Exploratory Data Analysis of Spotify Data (2023-2024)
+> End-to-end data wrangling and EDA pipeline merging two years of Spotify chart data to uncover music streaming trends, artist performance patterns, and distribution characteristics across 2023 and 2024.
 
-Authors: Bima Setia Sugiharto & Sholikin
+---
 
-Objective: This project aims to merge, clean, and analyze popular Spotify track datasets from 2023 and 2024. through data cleaning processes (such as removing irrelevant columns, handling missing values, and detecting outliers) and data visualization, this project provides insights into music trends, stream distributions, and artist performance on the streaming platform.
+## Overview
 
-3. System Requirements
-- Ensure your Python environment has the following libraries installed:
-  
-pandas for data manipulation.
+This project demonstrates a complete **data engineering and analysis workflow** applied to real-world music streaming data. Starting from two raw, structurally inconsistent CSV files, the pipeline standardizes, merges, cleans, and analyzes Spotify chart data to surface actionable insights about what drives a track's popularity on the world's largest music streaming platform.
 
-numpy for numerical operations.
+Key focus areas:
+- Multi-source data integration with schema harmonization
+- Robust cleaning pipeline handling encoding issues, type mismatches, and missing values
+- Outlier detection using statistical methods (IQR)
+- Visual storytelling through distribution and ranking analysis
 
-matplotlib & seaborn for data visualization.
+---
 
-- Required input files (must be in the same directory as the script):
-  
-spotify-2023.csv
+## Problem Statement
 
-spotify-2024.csv
+Spotify chart data across different years is inconsistently structured different column names, date formats, numeric encodings, and feature sets. How do we transform two messy, incompatible datasets into a unified, analysis-ready source of truth?
 
-3. Code Workflow
+---
 
-- Setup & Data Loading
-  
-The code begins by importing necessary libraries and loading the datasets.
+## Repository Structure
 
-Action: Run the initial cells to load pandas and read the CSV files using encoding='latin-1' to handle special characters correctly.
+```
+├── spotify-2023.csv                    # Raw Spotify Most Streamed Songs 2023
+├── spotify-2024.csv                    # Raw Spotify Most Streamed Songs 2024
+├── spotify_cleaned.csv                 # Output: cleaned & merged master dataset
+├── cleaning_EDA_data.ipynb             # Version 1: initial wrangling & EDA
+├── cleaning_EDA_data_version 2.ipynb   # Version 2: refined pipeline & extended analysis
+└── README.md
+```
 
-- 2023 Data Cleaning
-  
-Column Selection: Technical audio features (like bpm, key, danceability_%, etc.) are dropped to focus on popularity metrics.
+---
 
-Renaming: Columns are renamed for consistency (e.g., track_name to track).
+## Dataset
 
-Formatting: Commas are removed from numeric strings (e.g., "1,000" becomes 1000) and converted to float data types.
+| Property | 2023 Dataset | 2024 Dataset |
+|----------|-------------|-------------|
+| **Source** | [Kaggle — Most Streamed Spotify Songs 2023](https://www.kaggle.com/datasets/nelgiriyewithana/top-spotify-songs-2023) | [Kaggle — Most Streamed Spotify Songs 2024](https://www.kaggle.com/datasets/nelgiriyewithana/most-streamed-spotify-songs-2024) |
+| **Key Fields** | track, artist, streams, playlists, charts | track, artist, streams, playlists, charts |
+| **Challenges** | Comma-separated numerics, mixed date columns | Extra platform columns (TikTok, SoundCloud), different date format |
 
-Handling Missing Values: Missing (NaN) values in numeric columns (like streams) are filled using the median value.
+---
 
-Date Standardization: Year, month, and day columns are combined into a single datetime object.
+## Pipeline Workflow
 
-- 2024 Data Cleaning
-  
-Column Selection: Irrelevant columns (like TikTok Posts, Soundcloud Streams, etc.) are dropped to align with the 2023 data structure.
+```
+spotify-2023.csv ──┐
+                   ├──► Schema Harmonization ──► pd.concat() ──► Deduplication
+spotify-2024.csv ──┘         │                                        │
+                              │                                        ▼
+                    Column rename/drop                         Outlier Detection
+                    Type casting                                  (IQR Method)
+                    Null imputation (median)                         │
+                    Date standardization                             ▼
+                                                           spotify_cleaned.csv
+                                                                     │
+                                                                     ▼
+                                                    Exploratory Data Analysis
+                                                    ├── Stream distribution (histogram)
+                                                    ├── Outlier visualization (boxplot)
+                                                    └── Top artists by streams (barplot)
+```
 
-Date Extraction: Year, month, and day are extracted from the Release Date column.
+---
 
-Format Matching: Column names are mapped to match the 2023 dataset to facilitate merging.
+## Tech Stack
 
-- Data Integration
-  
-Concatenation: Uses pd.concat() to merge the 2023 and 2024 datasets into a single master DataFrame (df).
+| Category | Tools |
+|----------|-------|
+| Language | Python 3.8+ |
+| Data Manipulation | Pandas, NumPy |
+| Visualization | Matplotlib, Seaborn |
+| Environment | Jupyter Notebook / Google Colab |
 
-Duplicate Removal: Checks for and removes duplicate rows based on track and artist combinations.
+---
 
-- Outlier Analysis & Export
-  
-Outlier Detection: The code uses the IQR (Interquartile Range) method to flag songs with unusually high or low performance (specifically in spotify_playlist and shazam_charts columns).
+## Getting Started
 
-Saving: The cleaned and processed data is exported to a new file named spotify_cleaned.csv.
+### 1. Clone the repository
+```bash
+git clone https://github.com/Bimzt/spotify-data-wrangling-eda-2023-2024
+cd https://github.com/Bimzt/spotify-data-wrangling-eda-2023-2024
+```
 
-- Exploratory Data Analysis (EDA)
-  
-The final section generates visualizations to understand data distribution:
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
-Histogram: To observe the distribution of streams (checking for skewness).
+### 3. Run the notebook
+```bash
+jupyter notebook "cleaning_EDA_data_version 2.ipynb"
+```
 
-Boxplot: To visually identify outliers in playlist counts and streams.
+> Ensure `spotify-2023.csv` and `spotify-2024.csv` are in the **same directory** as the notebook before running.
 
-Barplot: To rank top artists by track count or total streams.
+---
+
+## Key Wrangling Steps
+
+**2023 Data**
+- Dropped audio feature columns (bpm, danceability, etc.) to focus on chart performance metrics
+- Removed commas from numeric strings and cast to float
+- Imputed missing `streams` values using column median
+- Merged separate year/month/day columns into a unified datetime
+
+**2024 Data**
+- Dropped cross-platform columns (TikTok Posts, SoundCloud Streams, etc.)
+- Extracted date components from `Release Date` string
+- Renamed columns to match 2023 schema
+
+**Integration**
+- Concatenated both years with `pd.concat()`
+- Removed duplicates on `(track, artist)` key pairs
+- Detected outliers in `spotify_playlist` and `shazam_charts` using IQR method
+- Exported final dataset to `spotify_cleaned.csv`
+
+---
+
+## EDA Highlights
+
+| Analysis | Method | Insight |
+|----------|--------|---------|
+| Stream distribution | Histogram | Highly right-skewed — most tracks have modest streams; a small elite drives massive totals |
+| Outlier detection | Boxplot (IQR) | Viral/evergreen tracks appear as extreme outliers in playlist and chart counts |
+| Artist ranking | Barplot | Top artists dominate not just by hit count but by sustained playlist inclusion |
+
+---
+
+## Real-World Impact
+
+This type of EDA pipeline has direct applications in the music and entertainment industry:
+
+- **Record Label A&R** - Identifies emerging artists early by analyzing chart velocity and playlist penetration trends year-over-year
+- **Marketing & Promotion** - Uncovers which release months and artist profiles correlate with peak streaming performance, informing campaign timing
+- **Playlist Curators & DSPs** - Quantifies how playlist inclusion drives stream counts, supporting data-driven curation decisions
+- **Streaming Economics Research** - The extreme skew in stream distributions reveals the "superstar effect" in digital music, relevant for policy discussions on royalty distribution
+- **Data Engineering Education** - Demonstrates real-world schema harmonization challenges that practitioners face when integrating data from inconsistent sources
